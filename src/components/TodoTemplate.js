@@ -66,12 +66,27 @@ const TodoTemplate = () => {
     );
   };
 
+  // 할 일 체크 처리 함수
+  const checkTodo = (id) => {
+    console.log('클릭한 아이디: ', id);
+
+    setTodos(
+      todos.map(
+        (todo) => (todo.id === id ? { ...todo, done: !todo.done } : todo),
+        // { ...todo, done: !todo.done } <- 다른 값은 그대로 두고 done 값만 바꾸겠다.
+      ),
+    );
+  };
+
+  // 체크가 안 된 할 일의 개수를 카운트 하기
+  const countRestTodo = todos.filter((todo) => !todo.done).length;
+
   console.log(todos);
 
   return (
     <div className="TodoTemplate">
-      <TodoHeader />
-      <TodoMain todoList={todos} remove={removeTodo} />
+      <TodoHeader count={countRestTodo} />
+      <TodoMain todoList={todos} remove={removeTodo} check={checkTodo} />
       <TodoInput addTodo={addTodo} />
     </div>
   );
