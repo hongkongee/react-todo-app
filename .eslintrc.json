@@ -30,7 +30,8 @@
       "prefer-const": "off",
       "react/jsx-key": "off",
       "indent": "off",
-      "max-len": "off"
+      "max-len": "off",
+      "no-useless-escape": "off"
   
   }
 }
