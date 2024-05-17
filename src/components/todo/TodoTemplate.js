@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import TodoHeader from './TodoHeader';
 import TodoMain from './TodoMain';
 import TodoInput from './TodoInput';
-import '../scss/TodoTemplate.scss';
+import '../../scss/TodoTemplate.scss';
 
 const TodoTemplate = () => {
   // 백엔드 서버에 할 일 목록(json)을 요청(fetch)해서 받아와야 함

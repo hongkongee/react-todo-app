@@ -1,6 +1,6 @@
 import React from 'react';
 import TodoItem from './TodoItem';
-import '../scss/TodoMain.scss';
+import '../../scss/TodoMain.scss';
 
 const TodoMain = ({ todoList, remove, check }) => {
   return (
