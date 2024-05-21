@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // 새로운 전역 컨텍스트 생성
 const AuthContext = React.createContext({
@@ -25,6 +25,14 @@ export const AuthContextProvider = (props) => {
     setIsLoggedIn(true);
     setUserName(userName);
   };
+
+  useEffect(() => {
+    // 로그인을 한 상태라면
+    if (localStorage.getItem('ACCESS_TOKEN')) {
+      setIsLoggedIn(true);
+      setUserName(localStorage.getItem('LOGIN_USERNAME'));
+    }
+  }, []);
 
   // 로그아웃 핸들러
   const logoutHandler = () => {

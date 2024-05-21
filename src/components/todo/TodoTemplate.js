@@ -3,13 +3,25 @@ import TodoHeader from './TodoHeader';
 import TodoMain from './TodoMain';
 import TodoInput from './TodoInput';
 import '../../scss/TodoTemplate.scss';
+import { useNavigate } from 'react-router-dom';
 
 const TodoTemplate = () => {
+  const redirection = useNavigate();
   // 백엔드 서버에 할 일 목록(json)을 요청(fetch)해서 받아와야 함
   const API_BASE_URL = 'http://localhost:8181/api/todos';
 
   //todos 배열을 상태 관리 //useState 초기값
   const [todos, setTodos] = useState([]);
+
+  // 로그인 인증 토큰 얻어오기
+  const token = localStorage.getItem('ACCESS_TOKEN');
+
+  // fetch 요청을 보낼 때 사용할 요청 헤더 설정
+  const requestHeader = {
+    'content-type': 'application/json',
+    // JWT에 대한 인증 토큰이라는 타입을 선언.
+    Authorization: 'Bearer ' + token,
+  };
 
   // id값 시퀀스 함수 (DB 연동시키면 필요없게 됨.) -> 주석 처리
   // const makeNewId = () => {
@@ -31,12 +43,12 @@ const TodoTemplate = () => {
 
     const res = await fetch(API_BASE_URL, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: requestHeader,
       body: JSON.stringify(newTodo),
     });
 
     const json = await res.json();
-    setTodos(json);
+    setTodos(json.todos);
 
     /*
     fetch(API_BASE_URL, {
@@ -66,6 +78,7 @@ const TodoTemplate = () => {
     console.log('id: ', id);
     fetch(`${API_BASE_URL}/${id}`, {
       method: 'DELETE',
+      headers: requestHeader,
     })
       .then((res) => res.json())
       .then((data) => setTodos(data.todos))
@@ -79,7 +92,7 @@ const TodoTemplate = () => {
   const checkTodo = (id, done) => {
     fetch(API_BASE_URL, {
       method: 'PATCH',
-      headers: { 'content-type': 'application/json' },
+      headers: requestHeader,
       body: JSON.stringify({
         id,
         done: !done,
@@ -94,13 +107,22 @@ const TodoTemplate = () => {
 
   useEffect(() => {
     // 페이지가 처음 렌더링 됨과 동시에 할 일 목록을 서버에 요청해서 뿌려 주겠습니다.
-    fetch(API_BASE_URL)
-      .then((res) => res.json())
+    fetch(API_BASE_URL, {
+      method: 'GET',
+      headers: requestHeader,
+    })
+      .then((res) => {
+        if (res.status === 200) return res.json();
+        else if (res.status === 403) {
+          alert('로그인이 필요한 서비스 입니다.');
+          redirection('/login');
+        } else {
+          alert('관리자에게 문의하세요');
+        }
+      })
       .then((json) => {
-        console.log(json);
-
-        // fetch를 통해 받아온 데이터를 상태 변수에 할당
-        setTodos(json.todos);
+        // fetch를 통해 받아온 데이터를 상태 변수에 할당 (로그인을 한 사용자만 === json이 존재하는 유저만)
+        if (json) setTodos(json.todos);
       });
   }, []);
 

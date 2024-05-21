@@ -1,5 +1,5 @@
 import { AppBar, Grid, Toolbar, Typography } from '@mui/material';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import '../../scss/Header.scss';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../../utils/AuthContext';
