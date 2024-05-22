@@ -4,6 +4,7 @@ import { API_BASE_URL as BASE, USER } from '../../config/host-config';
 import AuthContext from '../../utils/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import CustomSnackBar from '../layout/CustomSnackBar';
+import { KAKAO_AUTH_URL } from '../../config/kakao-config';
 
 const Login = () => {
   const REQUEST_URL = BASE + USER + '/signin';
@@ -144,7 +145,7 @@ const Login = () => {
                 </Button>
               </Grid>
               <Grid item xs={12}>
-                <a href="">
+                <a href={KAKAO_AUTH_URL}>
                   <img
                     style={{ width: '100%' }}
                     alt="kakaobtn"
