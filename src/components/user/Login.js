@@ -143,6 +143,15 @@ const Login = () => {
                   로그인
                 </Button>
               </Grid>
+              <Grid item xs={12}>
+                <a href="">
+                  <img
+                    style={{ width: '100%' }}
+                    alt="kakaobtn"
+                    src={require('../../assets/img/kakao_login_medium_wide.png')}
+                  />
+                </a>
+              </Grid>
             </Grid>
           </form>
         </Container>
