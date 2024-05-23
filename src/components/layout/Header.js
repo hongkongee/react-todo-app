@@ -17,7 +17,14 @@ const Header = () => {
   const { isLoggedIn, userName, onLogout } = useContext(AuthContext);
 
   // 로그아웃 핸들러
-  const logoutHandler = () => {
+  const logoutHandler = async () => {
+    const res = await fetch(`${API_BASE_URL}${USER}/logout`, {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('ACCESS_TOKEN'),
+      },
+    });
+
     // AuthContext의 onLogout 함수를 호출하여 로그인 상태를 업데이트 합니다.
     onLogout();
     redirection('/login');
@@ -32,15 +39,21 @@ const Header = () => {
       },
     });
 
-    if (res.status === 200) {
+    if (
+      res.status === 200 &&
+      res.headers.get('Content-type').startsWith('image')
+    ) {
       // 서버에서는 byte[]로 직렬화된 이미지가 응답되므로
       // blob()을 통해 전달받아야 한다. (json()은 아님)
       const profileBlob = await res.blob();
       // 해당 이미지를 imgUrl로 변경
       const imgUrl = window.URL.createObjectURL(profileBlob);
       setProfileUrl(imgUrl);
+    } else if (res.headers.get('Content-type').startsWith('text')) {
+      const imageUrl = await res.text();
+      setProfileUrl(imageUrl);
     } else {
-      const err = await res.text();
+      const err = await res.error();
       console.log('err: ', err);
       setProfileUrl(null);
     }

@@ -171,6 +171,7 @@ const Join = () => {
       그럼 JSON 데이터는? Content-type이 application/json이다. 
       Content-type이 서로 다른 데이터를 한번에 FormData에 감싸서 보내면 
       415(unsupported Media Type) 에러가 발생함.
+      
       그렇다면 -> JSON을 Blob으로 바꿔서 함께 보내자. 
       Blob은 이미지, 사운드, 비디오 같은 멀티미디어 파일을 바이트 단위로 쪼개어 파일 손상을 방지하게 
       해 주는 타입. -> multipart/form-data에도 허용됨.
@@ -184,8 +185,8 @@ const Join = () => {
     // 이미지 파일과 회원정보 JSON을 하나로 묶어서 보낼 예정.
     // FormData 객체를 활용
     const userFormData = new FormData();
-    userFormData.append('user', userJsonBlob);
-    userFormData.append('profileImage', $fileTag.current.files[0]);
+    userFormData.append('user', userJsonBlob); // 회원 정보 (Blob 타입)
+    userFormData.append('profileImage', $fileTag.current.files[0]); // 프로필 사진
 
     const res = await fetch(API_BASE_URL + USER, {
       method: 'POST',
