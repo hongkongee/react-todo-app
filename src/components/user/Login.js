@@ -5,6 +5,7 @@ import AuthContext from '../../utils/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import CustomSnackBar from '../layout/CustomSnackBar';
 import { KAKAO_AUTH_URL } from '../../config/kakao-config';
+import axios from 'axios';
 
 const Login = () => {
   const REQUEST_URL = BASE + USER + '/signin';
@@ -53,11 +54,15 @@ const Login = () => {
     // await는 프로미스 객체가 처리될 때까지 기다립니다.
     // 프로미스 객체의 반환값을 바로 활용할 수 있도록 도와줍니다.
     // then()을 활용하는 것보다 가독성이 좋고, 쓰기도 쉽습니다.
+
+    /*
     const res = await fetch(REQUEST_URL, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(inputLogin),
-    });
+    });*/
+
+    const res = await axios.post(REQUEST_URL, inputLogin);
 
     if (res.status === 400) {
       const text = await res.text();
@@ -65,23 +70,13 @@ const Login = () => {
       return;
     }
 
-    const { token, userName, role } = await res.json(); // 서버에서 전달된 json을 변수에 저장
+    const { token, userName, role } = await res.data;
 
     // Context API를 사용하여 로그인 상태를 업데이트
     onLogin(token, userName, role);
 
     // 홈으로 리다이렉트
     redirection('/');
-
-    /*
-    fetch(REQUEST_URL, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(inputLogin),
-    })
-      .then((res) => res.json())
-      .then((data) => alert(data))
-      .catch((err) => alert(err)); */
   };
 
   const loginHandler = (e) => {

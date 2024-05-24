@@ -6,6 +6,7 @@ import '../../scss/TodoTemplate.scss';
 import { useNavigate } from 'react-router-dom';
 import { Spinner } from 'reactstrap';
 import { API_BASE_URL as BASE, TODO, USER } from '../../config/host-config';
+import axiosInstance from '../../config/axios-config';
 
 const TodoTemplate = () => {
   const redirection = useNavigate();
@@ -18,16 +19,6 @@ const TodoTemplate = () => {
 
   // 로딩 상태값 관리 (처음에는 로딩이 무조건 필요하기 때문에 true -> 로딩이 끝나면 false)
   const [loading, setLoading] = useState(true);
-
-  // 로그인 인증 토큰 얻어오기
-  const [token, setToken] = useState(localStorage.getItem('ACCESS_TOKEN'));
-
-  // fetch 요청을 보낼 때 사용할 요청 헤더 설정
-  const requestHeader = {
-    'content-type': 'application/json',
-    // JWT에 대한 인증 토큰이라는 타입을 선언.
-    Authorization: 'Bearer ' + token,
-  };
 
   // id값 시퀀스 함수 (DB 연동시키면 필요없게 됨.) -> 주석 처리
   // const makeNewId = () => {
@@ -42,47 +33,19 @@ const TodoTemplate = () => {
     부모 컴포넌트에서 함수를 선언(매개변수 꼭 선언) -> props로 함수 전달.
     자식 컴포넌트에서 전달받은 함수를 호출하면서 매개값으로 데이터를 전달.
   */
+
+  // 할 일 추가 함수
   const addTodo = async (todoText) => {
     const newTodo = {
       title: todoText,
     };
 
-    // 할 일 등록 요청
-    const res = await fetch(API_BASE_URL, {
-      method: 'POST',
-      headers: requestHeader,
-      body: JSON.stringify(newTodo),
-    });
-
-    if (res.status === 200) {
-      const json = await res.json();
-      setTodos(json.todos);
-    } else if (res.status === 403) {
-      const text = await res.text();
-      alert(text);
+    try {
+      const res = await axiosInstance.post(API_BASE_URL, newTodo);
+      if (res.status === 200) setTodos(res.data.todos);
+    } catch (error) {
+      console.log('error: ', error);
     }
-
-    /*
-    fetch(API_BASE_URL, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(newTodo),
-    })
-      .then((res) => {
-        if (res.status === 200) return res.json();
-        else {
-          console.log('error occured!');
-        }
-      })
-      .then((data) => {
-        setTodos(data.todos);
-      });
-      */
-
-    // useState로 선언한 변수는 setter로 변경
-    // react의 상태변수는 불변성(immutable)을 가지기 때문에
-    // 기존 상태에서 변경은 불가능 -> 새로운 상태로 만들어서 변경해야 한다.
-    setTodos((oldTodos) => [...oldTodos, newTodo]);
   };
 
   // 할 일 삭제 처리 함수
@@ -90,7 +53,6 @@ const TodoTemplate = () => {
     console.log('id: ', id);
     fetch(`${API_BASE_URL}/${id}`, {
       method: 'DELETE',
-      headers: requestHeader,
     })
       .then((res) => res.json())
       .then((data) => setTodos(data.todos))
@@ -104,7 +66,6 @@ const TodoTemplate = () => {
   const checkTodo = (id, done) => {
     fetch(API_BASE_URL, {
       method: 'PATCH',
-      headers: requestHeader,
       body: JSON.stringify({
         id,
         done: !done,
@@ -121,7 +82,6 @@ const TodoTemplate = () => {
   const fetchPromote = async () => {
     const res = await fetch(API_USER_URL + '/promote', {
       method: 'PUT',
-      header: requestHeader,
     });
 
     if (res.status === 400) {
@@ -130,32 +90,23 @@ const TodoTemplate = () => {
       const json = await res.json();
       localStorage.setItem('ACCESS_TOKEN', json.token);
       localStorage.setItem('USER_ROLE', json.role);
-      setToken(json.token);
     }
   };
 
   useEffect(() => {
     // 페이지가 처음 렌더링 됨과 동시에 할 일 목록을 서버에 요청해서 뿌려 주겠습니다.
-    fetch(API_BASE_URL, {
-      method: 'GET',
-      headers: requestHeader,
-    })
-      .then((res) => {
-        if (res.status === 200) return res.json();
-        else if (res.status === 403) {
-          alert('로그인이 필요한 서비스 입니다.');
-          redirection('/login');
-        } else {
-          alert('관리자에게 문의하세요');
-        }
-      })
-      .then((json) => {
-        // fetch를 통해 받아온 데이터를 상태 변수에 할당 (로그인을 한 사용자만 === json이 존재하는 유저만)
-        if (json) setTodos(json.todos);
-
-        // 로딩 완료 처리
+    const fetchTodos = async () => {
+      try {
+        const res = await axiosInstance.get(API_BASE_URL);
+        if (res.status === 200) setTodos(res.data.todos);
+      } catch (error) {
+        console.log('error: ', error);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchTodos();
   }, []);
 
   console.log(todos);

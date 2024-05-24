@@ -49,13 +49,19 @@ const Header = () => {
       // 해당 이미지를 imgUrl로 변경
       const imgUrl = window.URL.createObjectURL(profileBlob);
       setProfileUrl(imgUrl);
-    } else if (res.headers.get('Content-type').startsWith('text')) {
+      console.log('imgUrl: ', profileUrl);
+    } else if (
+      res.status === 200 &&
+      res.headers.get('Content-type').startsWith('text')
+    ) {
       const imageUrl = await res.text();
       setProfileUrl(imageUrl);
+      console.log('imgUrl: ', profileUrl);
     } else {
-      const err = await res.error();
+      const err = await res.text();
       console.log('err: ', err);
       setProfileUrl(null);
+      console.log('imgUrl: ', profileUrl);
     }
   };
 
