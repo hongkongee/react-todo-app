@@ -47,12 +47,12 @@ axiosInstance.interceptors.response.use(
     // 응답에 에러가 발생하면 실행할 두번째 함수
     if (error.response.status === 401 && !originalRequest._retry) {
       console.log('응답 상태 401 확인! 토큰 재발급 요청!');
-      // _retry 속성은 사용자 정의 속성. 최초 요청에서는 존재하지 x
+      // _retry 속성은 사용자 정의 속성. 최초 요청에서는 존재하지 x -> falsy
       // 만약 재요청 시에도 문제가 발생했다면(refresh 만료), 더 이상 똑같은 요청을 반복해서 무한 루프에 빠지지 않도록
       // 막아주는 역할을 합니다.
       originalRequest._retry = true;
 
-      // 토큰에 문제가 있는 경우 (401)
+      // 토큰에 문제가 있는 경우 (401) -> 토큰 재발급 (/refresh) 서버 요청
       try {
         const refreshToken = localStorage.getItem('REFRESH_TOKEN');
         const res = await axios.post(`${USER_URL}/refresh`, { refreshToken }); // 서버에 refreshToken을 담아서 요청
@@ -63,7 +63,7 @@ axiosInstance.interceptors.response.use(
           // 실패한 원본 요청 정보에서 Authorization의 값을 새 토큰으로 바꿔주자.
           originalRequest.headers.Authorization = `Bearer ${accessToken}`;
           // axios 인스턴스의 기본 header Authorization도 최신 토큰으로 바꿔놓자.
-          axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+          axiosInstance.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
           // axiosInstance를 사용해서 다시 한 번 원본의 요청을 보낼 거고, 응답값을 원래 호출한 곳으로 리턴.
           return axiosInstance(originalRequest);
         }
