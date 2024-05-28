@@ -47,21 +47,6 @@ const Login = () => {
       password,
     });
 
-    // 요청 방식: POST / email, password라는 이름으로 JSON을 전송하세요
-    // 응답 데이터를 console.log로 확인하세요.
-
-    // await는 async로 선언된 함수에서만 사용이 가능합니다.
-    // await는 프로미스 객체가 처리될 때까지 기다립니다.
-    // 프로미스 객체의 반환값을 바로 활용할 수 있도록 도와줍니다.
-    // then()을 활용하는 것보다 가독성이 좋고, 쓰기도 쉽습니다.
-
-    /*
-    const res = await fetch(REQUEST_URL, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(inputLogin),
-    });*/
-
     const res = await axios.post(REQUEST_URL, inputLogin);
 
     if (res.status === 400) {
