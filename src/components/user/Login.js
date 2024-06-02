@@ -26,11 +26,6 @@ const Login = () => {
     }
   }, [isLoggedIn]);
 
-  const [inputLogin, setInputLogin] = useState({
-    email: '',
-    password: '',
-  });
-
   // 서버에 비동기 로그인 요청 (AJAX 요청)
   // 함수 앞에 async를 붙이면 해당 함수는 프로미스 객체를 바로 리턴합니다.
 
@@ -39,29 +34,19 @@ const Login = () => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
-    console.log('email: ', email);
-    console.log('password: ', password);
+    try {
+      const res = await axios.post(REQUEST_URL, { email, password });
 
-    setInputLogin({
-      email,
-      password,
-    });
+      const { token, userName, role } = await res.data;
 
-    const res = await axios.post(REQUEST_URL, inputLogin);
+      // Context API를 사용하여 로그인 상태를 업데이트
+      onLogin(token, userName, role);
 
-    if (res.status === 400) {
-      const text = await res.text();
-      alert(text);
-      return;
+      // 홈으로 리다이렉트
+      redirection('/');
+    } catch (error) {
+      alert(error.response.data);
     }
-
-    const { token, userName, role } = await res.data;
-
-    // Context API를 사용하여 로그인 상태를 업데이트
-    onLogin(token, userName, role);
-
-    // 홈으로 리다이렉트
-    redirection('/');
   };
 
   const loginHandler = (e) => {

@@ -8,6 +8,7 @@ import Join from './components/user/Join';
 import { AuthContextProvider } from './utils/AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import KakaoLoginHandler from './components/user/KakaoLoginHandler';
+import Chat from './components/chat/Chat';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/join" element={<Join />} />
           <Route path="/oauth/kakao" element={<KakaoLoginHandler />} />
+          <Route path="/chat" element={<Chat />} />
         </Routes>
       </div>
 

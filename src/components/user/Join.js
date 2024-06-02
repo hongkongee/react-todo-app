@@ -32,6 +32,7 @@ const Join = () => {
       dispatch({ type: 'SET_USER_VALUE', key, value: inputValue });
     dispatch({ type: 'SET_MESSAGE', key, value: msg });
     dispatch({ type: 'SET_CORRECT', key, value: flag });
+    // -> reducer 함수 호출
   };
 
   // 각각의 핸들러에 붙어 있는 디바운스 함수를 일괄적 처리

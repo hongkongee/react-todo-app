@@ -38,7 +38,9 @@ export const AuthContextProvider = (props) => {
     // 로그인을 한 상태라면
     if (localStorage.getItem('ACCESS_TOKEN')) {
       setIsLoggedIn(true);
-      setUserName(localStorage.getItem('LOGIN_USERNAME'));
+      const storedUserName = localStorage.getItem('LOGIN_USERNAME');
+      console.log('Stored username:', storedUserName);
+      setUserName(storedUserName);
     }
   }, []);
 
