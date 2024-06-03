@@ -50,23 +50,23 @@ function Chat() {
 
   // 로그인을 할 때 아이디를 받기 : sLogin - 아이디
   useEffect(() => {
-    console.log('두번째 useEffect 실행!');
+    // console.log('두번째 useEffect 실행!');
     if (!webSocket) return;
 
     function sLoginCallback(id) {
-      console.log('sLoginCallback 실행!', id);
+      // console.log('sLoginCallback 실행!', id);
       setUserId(id);
-      console.log(userId);
-      setTimeout(() => {
-        setMsgList((prev) => [
-          ...prev,
-          {
-            msg: `${id} joins the chat`,
-            type: 'welcome',
-            id: '',
-          },
-        ]);
-      }, 500);
+      // console.log(userId);
+      // setTimeout(() => {
+      setMsgList((prev) => [
+        ...prev,
+        {
+          msg: `${id} joins the chat`,
+          type: 'welcome',
+          id: '',
+        },
+      ]);
+      // }, 500);
     }
     webSocket.on('sLogin', sLoginCallback);
     return () => {
@@ -108,11 +108,11 @@ function Chat() {
 
     const sendData = {
       data: msg,
-      id: userId,
+      id: userName,
       target: privateTarget, // 1:1 채팅 상대방 이메일도 같이 전송
     };
     webSocket.emit('message', sendData); // 서버에 메세지(아이디, 메세지) 전송
-    setMsgList((prev) => [...prev, { msg, type: 'me', id: userId }]); // 내가 보낸 메세지
+    setMsgList((prev) => [...prev, { msg, type: 'me', id: userName }]); // 내가 보낸 메세지
     setMsg('');
   };
 
@@ -199,10 +199,11 @@ function Chat() {
             </div>
             <form className="login-form" onSubmit={onSubmitHandler}>
               <input
-                style={{ display: 'none' }}
-                placeholder="Enter your ID"
+                // style={{ display: 'none' }}
+                placeholder={userName}
                 onChange={onChangeUserIdHandler}
                 value={userId}
+                readOnly
               ></input>
               <button type="submit">입장하기</button>
             </form>
