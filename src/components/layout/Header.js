@@ -105,6 +105,13 @@ const Header = () => {
             </div>
           </Grid>
 
+          <Grid>
+            <div className="btn-group">
+              <Link to="/chat">전체 채팅방</Link>
+              <Link to="/roomchat">채팅방</Link>
+            </div>
+          </Grid>
+
           <Grid item>
             <div className="btn-group">
               {isLoggedIn ? (
