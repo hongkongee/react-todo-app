@@ -39,6 +39,7 @@ const Header = () => {
       },
     });
 
+    /*
     if (
       res.status === 200 &&
       res.headers.get('Content-type').startsWith('image')
@@ -57,6 +58,16 @@ const Header = () => {
       const imageUrl = await res.text();
       setProfileUrl(imageUrl);
       console.log('imgUrl: ', profileUrl);
+    } else {
+      const err = await res.text();
+      console.log('err: ', err);
+      setProfileUrl(null);
+      console.log('imgUrl: ', profileUrl);
+    }
+      */
+    if (res.status === 200) {
+      const imageUrl = await res.text();
+      setProfileUrl(imageUrl);
     } else {
       const err = await res.text();
       console.log('err: ', err);

@@ -1,14 +1,24 @@
 import React from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import {
+  createSearchParams,
+  useNavigate,
+  useSearchParams,
+} from 'react-router-dom';
 
 const BoardList = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const page = searchParams.get('page') || 1;
   const size = searchParams.get('size') || 10;
+
+  const pageParam = createSearchParams({
+    page,
+    size,
+  }).toString();
+
   const goToDetail = (id) => {
     navigate(`/board/detail/${id}`, {
-      state: { page, size },
+      search: pageParam,
     });
   };
   return (

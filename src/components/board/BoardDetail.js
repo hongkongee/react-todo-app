@@ -1,5 +1,10 @@
 import React, { useEffect } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import {
+  createSearchParams,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom';
 
 const BoardDetail = () => {
   // 경로 상에 붙은 변수 정보(path variable)을 가져오는 방법
@@ -13,10 +18,16 @@ const BoardDetail = () => {
   const size = searchParams.get('size') || 10;
 
   const navigate = useNavigate();
+
+  const pageParam = createSearchParams({
+    page,
+    size,
+  }).toString();
+
   const goToList = () => {
     // navigate(`/board/list?page=${page}&size=${size}`);
     navigate('/board/list', {
-      state: { page, size },
+      search: pageParam,
     });
   };
 
